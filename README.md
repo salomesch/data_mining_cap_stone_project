@@ -6,7 +6,7 @@ This repository contains the code for a small data mining project developed as p
 
 University of Lucerne
 
-Student Name  
+Salome Schwegler  
 Course: Data Mining for the Social Sciences using R
 Term: Spring 2026
 
@@ -24,10 +24,7 @@ The project should demonstrate:
 
 ## Research Question
 
-*(Replace with your own question)*
-
-Example:
-- How frequently do political speeches contain populist rhetoric?
+How has the media coverage of endometriosis shifted throughout the years? 
 
 
 ## Data Source
@@ -36,8 +33,8 @@ Describe the data source here.
 
 Example:
 
-- API: https://example-api.com
-- Documentation: https://example-api.com/docs
+- API: https://api.gdeltproject.org/api/v2/doc/doc?query=%22endometriosis%22&mode=artlist&maxrecords=100&timespan=1week
+- Documentation: https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/ 
 - Access method: HTTP GET requests
 
 

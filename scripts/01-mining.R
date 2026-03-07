@@ -42,3 +42,5 @@ variables_dataset = tibble(
   country = out_sourcecountry
 )
 
+# save variable data set
+saveRDS(variables_dataset, "data_raw/variable_dataset.rds")

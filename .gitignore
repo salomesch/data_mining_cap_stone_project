@@ -47,3 +47,8 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+#data files
+*.csv
+data_raw/
+data_preprocessed/

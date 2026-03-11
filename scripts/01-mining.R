@@ -18,7 +18,7 @@ response <- httr::GET(
     query = "endometriosis",
     mode = "artlist",
     maxrecords = 250,
-    timespan = "3weeks",
+    timespan = "3months",
     format = "json"
   )
 )

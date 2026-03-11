@@ -22,7 +22,14 @@ response <- httr::GET(
     format = "json"
   )
 )
+
 data <- content(response, as = "parsed")
+
+# convert data from json to R list
+data <- fromJSON(content(response, "text", encoding = "UTF-8"))
+
+#Convert to a clean data frame
+articles_df <- as.data.frame(data$articles)
 
 
 # Create empty vectors where to store the codes and names:
@@ -48,4 +55,11 @@ variables_dataset = tibble(
 saveRDS(variables_dataset, "data_raw/variable_dataset.rds")
 variables_dataset <- readRDS("data_raw/variable_dataset.rds")
 
+# save articles
+saveRDS(articles_df, "data_raw/articles_df.rds")
+
+
+# Check the source countries and languages covering the topic
+table(articles_df$sourcecountry)
+table(articles_df$language)
 

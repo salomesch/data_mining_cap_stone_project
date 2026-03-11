@@ -11,32 +11,18 @@ response <-  httr::GET(
   verbose()
 )
 
+Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
     query = "endometriosis",
     mode = "artlist",
     maxrecords = 250,
-    timespan = "3months",
+    timespan = "3weeks",
     format = "json"
   )
 )
 data <- content(response, as = "parsed")
-
-# 2. Extract the content as text
-# We use 'as = "text"' so jsonlite can read it properly
-raw_json <- content(response, as = "text", encoding = "UTF-8")
-
-# 3. Convert JSON text into an R List
-data_list <- fromJSON(raw_json)
-
-# 4. Extract just the 'articles' part into a Data Frame
-# GDELT puts the list of articles inside a slot called "articles"
-articles_df <- as.data.frame(data_list$articles)
-
-# 5. Look at your results!
-print(head(articles_df))
-
 
 
 # Create empty vectors where to store the codes and names:
@@ -60,3 +46,6 @@ variables_dataset = tibble(
 
 # save variable data set
 saveRDS(variables_dataset, "data_raw/variable_dataset.rds")
+variables_dataset <- readRDS("data_raw/variable_dataset.rds")
+
+

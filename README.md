@@ -24,8 +24,10 @@ The project should demonstrate:
 
 ## Research Question
 
-How has the media coverage of endometriosis shifted throughout the years? 
+Which countries print the most articles about Endometriosis?
+What is the more detailed content of the Articles about Endometriosis?
 
+I adjusted my research question, because the full text API on GDELT can only extract articles form the past 3 months. 
 
 ## Data Source
 

@@ -63,3 +63,80 @@ saveRDS(articles_df, "data_raw/articles_df.rds")
 table(articles_df$sourcecountry)
 table(articles_df$language)
 
+
+
+# experiment with other modes:  -------------------------------------------
+
+
+Sys.sleep(6)
+response <- GET(
+  url = "https://api.gdeltproject.org/api/v2/doc/doc",
+  query = list(
+    query = "endometriosis",
+    mode = "TimelineTone",      # this shows the senitiment over time)
+    timespan = "3y",            
+    format = "json"
+  ),
+  timeout(60) 
+)
+
+#data <- content(response, as = "parsed")
+
+data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
+
+# looking at structure
+str(data)
+names(data)
+
+# Df
+timeline_df <- data$timeline$data[[1]]
+
+
+#save as RDS
+
+saveRDS(timeline_df, "data_raw/timeline_df.rds")
+
+########
+
+Sys.sleep(6)
+
+response_test <- GET(
+  url = "https://api.gdeltproject.org/api/v2/doc/doc",
+  query = list(
+    query = "pension reform sourcecountry:Germany",
+    mode = "TimelineTone",
+    timespan = "1y",
+    format = "json"
+  ),
+  timeout(60)
+)
+
+raw_text_test <- content(response_test, as = "text", encoding = "UTF-8")
+cat(substr(raw_text_test, 1, 300))
+
+
+
+# country spezifisch ------------------------------------------------------
+
+Sys.sleep(6)
+
+response_test <- GET(
+  url = "https://api.gdeltproject.org/api/v2/doc/doc",
+  query = list(
+    query = "endometriosis sourcecountry:Germany",
+    mode = "TimelineTone",
+    timespan = "3y",
+    format = "json"
+  ),
+  timeout(60)
+)
+
+raw_text_test <- content(response_test, as = "text", encoding = "UTF-8")
+cat(substr(raw_text_test, 1, 300))
+
+data_test <- fromJSON(raw_text_test)
+df <- data_test$timeline$data[[1]]
+df$date <- as.Date(substr(df$date, 1, 8), format = "%Y%m%d")
+df$country <- "Germany"
+
+head(df)

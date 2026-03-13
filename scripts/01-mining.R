@@ -96,15 +96,16 @@ timeline_df <- data$timeline$data[[1]]
 
 saveRDS(timeline_df, "data_raw/timeline_df.rds")
 
-########
+
+# TimelineSourceCountry --------------------------------------------------------------------
 
 Sys.sleep(6)
 
 response_test <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
-    query = "pension reform sourcecountry:Germany",
-    mode = "TimelineTone",
+    query = "endometriosis",
+    mode = "TimelineSourceCountry",
     timespan = "1y",
     format = "json"
   ),
@@ -112,7 +113,7 @@ response_test <- GET(
 )
 
 raw_text_test <- content(response_test, as = "text", encoding = "UTF-8")
-cat(substr(raw_text_test, 1, 300))
+data_test <- fromJSON(raw_text_test)
 
 
 

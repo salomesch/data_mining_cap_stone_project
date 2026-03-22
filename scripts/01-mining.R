@@ -96,27 +96,6 @@ timeline_df <- data$timeline$data[[1]]
 
 saveRDS(timeline_df, "data_raw/timeline_df.rds")
 
-
-# TimelineSourceCountry --------------------------------------------------------------------
-
-Sys.sleep(6)
-
-response_test <- GET(
-  url = "https://api.gdeltproject.org/api/v2/doc/doc",
-  query = list(
-    query = "endometriosis",
-    mode = "TimelineSourceCountry",
-    timespan = "1y",
-    format = "json"
-  ),
-  timeout(60)
-)
-
-raw_text_test <- content(response_test, as = "text", encoding = "UTF-8")
-data_test <- fromJSON(raw_text_test)
-
-
-
 # country spezifisch ------------------------------------------------------
 
 Sys.sleep(6)

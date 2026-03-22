@@ -6,11 +6,6 @@ library(rvest)
 library(jsonlite)
 
 
-response <-  httr::GET(
-  url = "https://api.gdeltproject.org/api/v2/doc/doc?query=%22endometriosis%22&mode=artlist&maxrecords=100&timespan=1week",
-  verbose()
-)
-
 Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
@@ -62,6 +57,61 @@ saveRDS(articles_df, "data_raw/articles_df.rds")
 # Check the source countries and languages covering the topic
 table(articles_df$sourcecountry)
 table(articles_df$language)
+
+
+
+# Write a loop to get all articles from the past 3 months: ----------------
+
+# Define dates
+date_sequence <- seq(as.Date("2026-01-01"), as.Date("2026-03-22"), by="day")
+all_articles <- list()
+
+for(i in 1:length(date_sequence)){
+  current_day <- format(date_sequence[i], "%Y%m%d")
+  print(paste("Fetching data for:", current_day))
+  
+  # tryCatch prevents the code from stopping if there is a timeout error
+  result <- tryCatch({
+    GET(
+      url = "https://api.gdeltproject.org/api/v2/doc/doc",
+      query = list(
+        query = "endometriosis",
+        mode = "artlist",
+        maxrecords = 250,
+        startdatetime = paste0(current_day, "000000"),
+        enddatetime = paste0(current_day, "235959"),
+        format = "json"
+      ),
+      # ADD THESE TWO LINES TO FIX THE TIMEOUT:
+      timeout(60),                      # guards the download phase
+      config(connecttimeout = 60)       # guards the connection phase
+    )
+  }, error = function(e) {
+    message(paste("Timeout on", current_day, "- skipping."))
+    return(NULL)
+  })
+  
+  # Process only if result is valid
+  if (!is.null(result) && status_code(result) == 200) {
+    raw_content <- content(result, as = "text", encoding = "UTF-8")
+    if (!grepl("Please limit requests", raw_content)) {
+      data <- fromJSON(raw_content)
+      if (!is.null(data$articles)) {
+        all_articles[[i]] <- as.data.frame(data$articles)
+      }
+    }
+  }
+  
+  # Stay under the rate limit
+  Sys.sleep(6)
+}
+
+# Combine all days into one table
+final_endo_df <- bind_rows(all_articles)
+final_endo_df
+# save variable data set
+saveRDS(final_endo_df, "data_raw/final_endo_df.rds")
+
 
 
 

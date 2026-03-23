@@ -123,8 +123,8 @@ response_timeline <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
     query = "endometriosis",
-    mode = "TimelineTone",      # this shows the senitiment over time)
-    timespan = "3y",            
+    mode = "TimelineTone",      # this shows the sentiment over time)
+    timespan = "4y",            
     format = "json"
   ),
   timeout(60) 
@@ -138,13 +138,16 @@ data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UT
 str(data_timeline)
 names(data_timeline)
 
-# Df
+# create df
 timeline_df <- data_timeline$timeline$data[[1]]
 
 
 #save as RDS
 
 saveRDS(timeline_df, "data_raw/timeline_df.rds")
+
+
+
 
 # country spezifisch ------------------------------------------------------
 

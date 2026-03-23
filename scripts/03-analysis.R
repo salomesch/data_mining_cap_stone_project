@@ -1,3 +1,12 @@
+
+# media coverage by country -----------------------------------------------
+
+endo_df_preprocessed <- readRDS("data_preprocessed/endo_df_preprocessed.rds")
+
+
+
+# sentiment analysis ------------------------------------------------------
+
 #load data 
 timeline_df_preprocessed <- readRDS("data_preprocessed/timeline_df_preprocessed.rds")
 

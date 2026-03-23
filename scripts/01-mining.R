@@ -63,7 +63,7 @@ table(articles_df$language)
 # Write a loop to get all articles from the past 3 months: ----------------
 
 # Define dates
-date_sequence <- seq(as.Date("2026-01-01"), as.Date("2026-03-22"), by="day")
+date_sequence <- seq(as.Date("2026-01-01"), as.Date("2026-03-11"), by="day")
 all_articles <- list()
 
 for(i in 1:length(date_sequence)){

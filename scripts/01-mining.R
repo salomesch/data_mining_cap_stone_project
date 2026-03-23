@@ -144,9 +144,7 @@ timeline_df <- data_timeline$timeline$data[[1]]
 
 #save as RDS
 
-saveRDS(timeline_df, "data_raw/timeline_df.rds")
-
-
+saveRDS(timeline_df, "data_raw/timeline_df_4.rds")
 
 
 # country spezifisch ------------------------------------------------------

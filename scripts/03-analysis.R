@@ -1,10 +1,39 @@
 
 # media coverage by country -----------------------------------------------
-
+# load data
 endo_df_preprocessed <- readRDS("data_preprocessed/endo_df_preprocessed.rds")
 
+# create df of countries in alphabetical order
+endo_df_country_a <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n()) 
 
+# order by frequency, remove empty line
+endo_df_country_f <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n())|> 
+  arrange(desc(n_articles))|> 
+  filter(sourcecountry != "")
 
+# top 10
+endo_df_country_f_top10 <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n())|> 
+  arrange(desc(n_articles)) |> 
+  filter(sourcecountry != "") |> 
+  slice_head(n = 10)
+
+# show the top 10 of most frequent countries with articles about endo
+media_coverage <- ggplot(endo_df_country_f, aes(x = n_articles, y = reorder(sourcecountry, n_articles)))+
+  geom_col( colour = "black", fill = "#2171B5", alpha = 0.7) +
+  labs(
+    title = "Media Coverage by Country",
+    subtitle = "From 01.01.2026 until 03.11.2026",
+    x = "Numbers of Articles about Endometriosis",
+    y = "Countries",
+  )  +
+  theme_minimal()
+# English speaking countries are at the top, obviously
 # sentiment analysis ------------------------------------------------------
 
 #load data 

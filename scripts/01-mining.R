@@ -119,7 +119,7 @@ saveRDS(final_endo_df, "data_raw/final_endo_df.rds")
 
 
 Sys.sleep(6)
-response <- GET(
+response_timeline <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
     query = "endometriosis",
@@ -132,14 +132,14 @@ response <- GET(
 
 #data <- content(response, as = "parsed")
 
-data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
+data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UTF-8"))
 
 # looking at structure
-str(data)
-names(data)
+str(data_timeline)
+names(data_timeline)
 
 # Df
-timeline_df <- data$timeline$data[[1]]
+timeline_df <- data_timeline$timeline$data[[1]]
 
 
 #save as RDS

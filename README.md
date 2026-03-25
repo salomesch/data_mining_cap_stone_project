@@ -35,7 +35,8 @@ Describe the data source here.
 
 Example:
 
-- API: https://api.gdeltproject.org/api/v2/doc/doc?query=%22endometriosis%22&mode=artlist&maxrecords=100&timespan=1week
+- API: https://api.gdeltproject.org/api/v2/doc/doc
+    with specific query parameters
 - Documentation: https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/ 
 - Access method: HTTP GET requests
 

@@ -15,8 +15,7 @@ response <- httr::GET(
     maxrecords = 250,
     timespan = "3months",
     format = "json"
-  ),
-  timeout(60) 
+  ) 
 )
 
 # convert data from json to R list
@@ -127,7 +126,7 @@ Sys.sleep(6)
 response_country <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
-    query = "endometriosis sourcecountry:United Kingdom:United States:Australia",
+    query = "endometriosis sourcecountry:United Kingdom",
     mode = "TimelineTone",
     timespan = "4y",
     format = "json"

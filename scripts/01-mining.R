@@ -1,11 +1,10 @@
-
 # load libraries ----------------------------------------------------------
 library(tidyverse)
 library(httr)
 library(rvest)
 library(jsonlite)
 
-# get 250 articles on endometriosis from past 3 months
+# get 250 articles about endometriosis from the past 3 months
 Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",

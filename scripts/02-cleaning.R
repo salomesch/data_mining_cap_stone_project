@@ -24,8 +24,7 @@ endo_df_preprocessed <- endo_df_preprocessed |>
 saveRDS(endo_df_preprocessed, "data_preprocessed/endo_df_preprocessed.rds")
 
 
-# preprocess data for sentiment score analyiss ---------------------------------------------------------
-
+# preprocess data for sentiment score analysis ---------------------------------------------------------
 #load data 
 timeline_df_preprocessed <- readRDS("data_raw/timeline_df_4.rds")
 

@@ -63,7 +63,7 @@ table(articles_df$language)
 # Write a loop to get all articles from the past 3 months: ----------------
 
 # Define dates
-date_sequence <- seq(as.Date("2026-01-01"), as.Date("2026-03-11"), by="day")
+date_sequence <- seq(as.Date("2025-12-25"), as.Date("2026-03-24"), by="day")
 all_articles <- list()
 
 for(i in 1:length(date_sequence)){
@@ -82,7 +82,7 @@ for(i in 1:length(date_sequence)){
         enddatetime = paste0(current_day, "235959"),
         format = "json"
       ),
-      # ADD THESE TWO LINES TO FIX THE TIMEOUT:
+      # These two lines fix the timeout, section written with help of AI
       timeout(60),                      # guards the download phase
       config(connecttimeout = 60)       # guards the connection phase
     )
@@ -107,10 +107,10 @@ for(i in 1:length(date_sequence)){
 }
 
 # Combine all days into one table
-final_endo_df <- bind_rows(all_articles)
-final_endo_df
+final_endo_df_2 <- bind_rows(all_articles)
+final_endo_df_2
 # save variable data set
-saveRDS(final_endo_df, "data_raw/final_endo_df.rds")
+saveRDS(final_endo_df_2, "data_raw/final_endo_df_2.rds")
 
 
 

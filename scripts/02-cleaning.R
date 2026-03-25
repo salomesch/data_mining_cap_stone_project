@@ -5,7 +5,7 @@ library(lubridate)
 
 # preprocess data for media coverage analysis by country ------------------
 # load data
-endo_df_preprocessed <- readRDS("data_raw/final_endo_df_2.rds")
+endo_df_preprocessed <- readRDS("data_raw/final_endo_df.rds")
 
 # create readable format of date with  (this step was done with the help of AI)
 endo_df_preprocessed <- endo_df_preprocessed |> 

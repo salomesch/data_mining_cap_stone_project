@@ -5,7 +5,7 @@ library(httr)
 library(rvest)
 library(jsonlite)
 
-
+# get 250 articles on endometriosis from past 3 months
 Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
@@ -15,40 +15,15 @@ response <- httr::GET(
     maxrecords = 250,
     timespan = "3months",
     format = "json"
-  )
+  ),
+  timeout(60) 
 )
-
-data <- content(response, as = "parsed")
 
 # convert data from json to R list
 data <- fromJSON(content(response, "text", encoding = "UTF-8"))
 
 #Convert to a clean data frame
 articles_df <- as.data.frame(data$articles)
-
-
-# Create empty vectors where to store the codes and names:
-out_url <- vector(mode = "character", length = length(data$articles))
-out_title <- vector(mode = "character", length = length(data$articles))
-out_sourcecountry <- vector(mode = "character", length = length(data$sourcecountry))
-
-# Now loop to extract all codes/names from the list:
-for (i in 1:length(data$articles)){
-  out_url[i] <- data$articles[[i]]$url
-  out_title[i] <- data$articles[[i]]$title
-  out_sourcecountry[i] <- data$articles[[i]]$sourcecountry
-}
-
-# 5. Convert into a tidy tibble --------------------
-variables_dataset = tibble(
-  url = out_url, 
-  title = out_title,
-  country = out_sourcecountry
-)
-
-# save variable data set
-saveRDS(variables_dataset, "data_raw/variable_dataset.rds")
-variables_dataset <- readRDS("data_raw/variable_dataset.rds")
 
 # save articles
 saveRDS(articles_df, "data_raw/articles_df.rds")
@@ -115,7 +90,7 @@ saveRDS(final_endo_df_2, "data_raw/final_endo_df_2.rds")
 
 
 
-# experiment with other modes:  -------------------------------------------
+# get sentiment score from the past 4 years:  -------------------------------------------
 
 
 Sys.sleep(6)
@@ -129,8 +104,6 @@ response_timeline <- GET(
   ),
   timeout(60) 
 )
-
-#data <- content(response, as = "parsed")
 
 data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UTF-8"))
 
@@ -147,26 +120,24 @@ timeline_df <- data_timeline$timeline$data[[1]]
 saveRDS(timeline_df, "data_raw/timeline_df_4.rds")
 
 
-# country spezifisch ------------------------------------------------------
+# country specify ------------------------------------------------------
+# i.e. look at countries with top 3 media coverage
 
 Sys.sleep(6)
-
-response_test <- GET(
+response_country <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
   query = list(
-    query = "endometriosis sourcecountry:Germany",
+    query = "endometriosis sourcecountry:United Kingdom:United States:Australia",
     mode = "TimelineTone",
-    timespan = "3y",
+    timespan = "4y",
     format = "json"
   ),
   timeout(60)
 )
 
-raw_text_test <- content(response_test, as = "text", encoding = "UTF-8")
-cat(substr(raw_text_test, 1, 300))
+raw_country <- fromJSON(content(response_country, as = "text", encoding = "UTF-8"))
 
-data_test <- fromJSON(raw_text_test)
-df <- data_test$timeline$data[[1]]
+df <- response_country$timeline$data[[1]]
 df$date <- as.Date(substr(df$date, 1, 8), format = "%Y%m%d")
 df$country <- "Germany"
 

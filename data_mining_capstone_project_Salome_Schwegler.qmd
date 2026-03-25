@@ -1,0 +1,36 @@
+---
+title: "Capstone Project: Analysis of Media Coverage and Sentiment Around Endometriosis with the GDELT API"
+author: "Salome Schwegler"
+format: pdf
+editor: visual
+---
+
+## LLM disclosure
+
+## Introduction
+
+Endometriosis is a chronic inflammatory illness in which tissue resembling the endometrial lining of the uterus grows elsewhere, causing severe pain and a great quantity and a wide range of symptoms (Culley et al. 2013). Despite affecting an estimated 190 million people worldwide, endometriosis remains significantly underdiagnosed, with patients waiting an average of seven to ten years before receiving an accurate diagnosis (Shafrir et al. 2018). This diagnostic delay can be attributed to structural shortcomings within healthcare systems, as well as to a broader lack of cultural acceptance of the illness (Armour et al. 2020). Both structural issues and the degree of societal acceptance are sustained and reflected by media coverage.
+
+This capstone project, conducted within the data mining class, examines global and multilingual news coverage of endometriosis with the use of the Global Database of Events, Language, and Tone (GDELT Project). The GDELT Project is the largest open database of the human society that has ever been created. The database aims to display all data about our society and to foster interconnectivity across the globe. This is achieved by capturing and representing media coverage from almost every corner of the world. The database is updated daily, and all the real-time datasets are updated every 15 minutes.
+
+## Data and Methodology
+
+### Data source
+
+### Article extraction (artlist mode)
+
+#### Getting the data
+
+#### Preprocessing the data
+
+#### Analysis
+
+### Sentiment score (TimelineTone mode)
+
+#### Getting the data
+
+#### Preprocessing the data
+
+#### Analysis
+
+## Conclusion and Limitations

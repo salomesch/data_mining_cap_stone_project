@@ -89,7 +89,7 @@ articles_df <- as.data.frame(data$articles)
 
 ```
 
-In order to work around the maximum record limit of 250 articles per request, a day-by-day loop was written to retrieve up to 250 articles for each day across a period of three months (between 25.12.2025 and 24.03.2026). By sending one request per day, the 250-record cap applies independently to each day rather than to the entire period, maximising the total number of articles retrieved. Each request is wrapped in a tryCatch() function, which catches any timeout or connection issues and skips to the next day rather than stopping the loop entirely if a single request fails. The tryCatch() function consists of two blocks. The first block executes the GET request, with two timeout parameters: timeout(60), which controls how long R waits to receive the full response and config(connecttimeout = 60), which controls how long R waits to establish the initial connection to the server. If the request fails, the execution jumps to the second block and prints “Timeout on” the current date and skips that specific day. If a valid response in the first block is received, which is indicated by the HTTP 200 status code, the JSON is parsed and converted into a dataframe. A six-second pause at the end of each iteration ensures the request frequency stays within the GDELT’s limits. Once the loop has iterated through each day, all daily dataframes are combined into a single table using bind_rows().
+In order to work around the maximum record limit of 250 articles per request, a day-by-day loop was written to retrieve up to 250 articles for each day across a period of three months (between 25.12.2025 and 24.03.2026). By sending one request per day, the 250-record cap applies independently to each day rather than to the entire period, maximising the total number of articles retrieved. Each request is wrapped in a tryCatch() function, which catches any timeout or connection issues and skips to the next day rather than stopping the loop entirely if a single request fails. The tryCatch() function consists of two blocks. The first block executes the GET request, with two timeout parameters: timeout(60), which controls how long R waits to receive the full response and config(connecttimeout = 60), which controls how long R waits to establish the initial connection to the server. If the request fails, the execution jumps to the second block and prints “Timeout on” the current date and skips that specific day. If a valid response in the first block is received, which is indicated by the HTTP 200 status code, the JSON is parsed and converted into a dataframe. A six-second pause at the end of each iteration ensures the request frequency stays within the GDELT’s limits. Once the loop has iterated through each day, all daily dataframes are combined into a single table using bind_rows(). The combined dataframe was stored in the data_raw folder with the name final_endo_df_2.rds. It contains 1017 observations. The reason why this df is numbered with a 2 is that I looped multiple times through different time spans and on different days and the most articles that I was able to extract is stored in final_endo_df_2.rds and was used for further processing and analysis. The GET request seemed to not work well everytime, i.e. there have been days where I was only able to get around 50 observations.
 
 ```{r}
 # Define dates
@@ -146,12 +146,12 @@ final_endo_df_2
 
 #### Preprocessing the data
 
-The following code cleans the raw data file and stores the dataframe in the preprocessed data folder for future analysis. The raw date column “seendate” is stored in a compact ISO 8601 format (i.e. 20260326T094500Z). The object has to be parsed into a proper datetime object in R. This is done with the ymd_hms() function from the “lubridate” package. The date is then divided into individual time components such as year, month, day and hour. The individual components are then stored in separate columns, making it straightforward to group and aggregate the data by any of these units in future analysis. The preprocessed data is then saved in the preprocessed folder.
+The following code cleans the raw data file and stores the dataframe in the preprocessed data folder for subsequent analysis. The raw date column “seendate” is stored in a compact ISO 8601 format (i.e. 20260326T094500Z). The object has to be parsed into a proper datetime object in R. This is done with the ymd_hms() function from the “lubridate” package. The date is then divided into individual time components such as year, month, day and hour. The individual components are then stored in separate columns, making it straightforward to group and aggregate the data by any of these units in future analysis. The preprocessed data is then saved in the preprocessed folder.
 
 ```{r}
 # preprocess data for media coverage analysis by country ------------------
 # load data
-endo_df_preprocessed <- readRDS("data_raw/final_endo_df.rds")
+endo_df_preprocessed <- readRDS("data_raw/final_endo_df_2.rds")
 
 # create readable format of date with  (this step was done with the help of AI)
 endo_df_preprocessed <- endo_df_preprocessed |> 
@@ -172,9 +172,120 @@ saveRDS(endo_df_preprocessed, "data_preprocessed/endo_df_preprocessed.rds")
 
 #### Analysis
 
+First of all, in the analysis section the preprocessed article dataset is loaded. The dataset is then grouped by sourcecountry. The total sum of articles by country is then counted.
+
+The output shows an alphabetical order of all the countries and their total article count.
+
+```{r}
+# media coverage by country -----------------------------------------------
+# load data
+endo_df_preprocessed <- readRDS("data_preprocessed/endo_df_preprocessed.rds")
+
+# create df of countries in alphabetical order
+endo_df_country_a <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n())|> 
+  filter(sourcecountry != "")
+endo_df_country_a
+
+```
+
+The same dataframe is then order by frequency in descending order. The output shows a ranked list of each country, displaying the total number of articles posted by each country, with the country that has posted the most articles appearing first.
+
+```{r}
+# order by frequency, remove empty line
+endo_df_country_f <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n())|> 
+  arrange(desc(n_articles))|> 
+  filter(sourcecountry != "")
+endo_df_country_f
+
+```
+
+This code creates a horizontal bar chart, plotting each country on the y-axis order by article count from top to bottom.
+
+```{r}
+# show most frequent countries with articles about endo in a bar plot
+media_coverage <- ggplot(endo_df_country_f, aes(x = n_articles, y = reorder(sourcecountry, n_articles)))+
+  geom_col( colour = "black", fill = "#2171B5", alpha = 0.7) +
+  labs(
+    title = "Media Coverage by Country",
+    subtitle = "From 25.12.2025 until 24.03.2026",
+    x = "Numbers of Articles about Endometriosis",
+    y = "Countries",
+  )  +
+  theme_minimal()
+media_coverage
+# English speaking countries are at the top, obviously
+```
+
+Further only the top 10 countries with the highest article counts are extracted and stored in a dataframe for a visualisation of the top 10 countries with the most news coverage on endometriosis.
+
+```{r}
+# top 10
+endo_df_country_f_top10 <- endo_df_preprocessed |> 
+  group_by(sourcecountry) |> 
+  summarise(n_articles = n())|> 
+  arrange(desc(n_articles)) |> 
+  filter(sourcecountry != "") |> 
+  slice_head(n = 10)
+endo_df_country_f_top10
+```
+
+```{r}
+# show the top 10 of most frequent countries with articles about endo
+media_coverage_top10 <- ggplot(endo_df_country_f_top10, aes(x = n_articles, y = reorder(sourcecountry, n_articles)))+
+  geom_col( colour = "black", fill = "#2171B5", alpha = 0.7) +
+  labs(
+    title = "Media Coverage for top 10 ",
+    subtitle = "From 25.12.2025 until 24.03.2026",
+    x = "Numbers of Articles about Endometriosis",
+    y = "Countries",
+  )  +
+  theme_minimal()
+media_coverage_top10
+# English speaking countries are at the top, obviously
+
+```
+
+The bar chart reveals a clear dominance of English-speaking countries at the top of the ranking.
+
 ### Sentiment score (TimelineTone mode)
 
+In order to answer RQ2 a second query mode TimelineTone is applied. Unlike the artlist, this mode does not return indiviudal articles but instead aggregates the average tone of all matching documents into a time series.
+
 #### Getting the data
+
+The GET request works as already described in the Data Access and API section. The maximum timespan of four years was added. Therefore a sentiment score for each day across 4 years is requested in the following code. A total of 1442 observations were extracted and stored in timeline_df_4.
+
+```{r}
+Sys.sleep(6)
+response_timeline <- GET(
+  url = "https://api.gdeltproject.org/api/v2/doc/doc",
+  query = list(
+    query = "endometriosis",
+    mode = "TimelineTone",      # this shows the sentiment over time)
+    timespan = "4y",            
+    format = "json"
+  ),
+  timeout(60) 
+)
+
+data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UTF-8"))
+
+# looking at structure
+str(data_timeline)
+names(data_timeline)
+
+# create df
+timeline_df <- data_timeline$timeline$data[[1]]
+
+
+#save as RDS
+
+#saveRDS(timeline_df, "data_raw/timeline_df_4.rds")
+```
 
 #### Preprocessing the data
 

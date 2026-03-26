@@ -33,6 +33,12 @@ media_coverage <- ggplot(endo_df_country_f, aes(x = n_articles, y = reorder(sour
     y = "Countries",
   )  +
   theme_minimal()
+
+#save bar blot
+ggsave(filename = "plots/media_coverage.png",
+       dpi = 300,
+       height = 5)
+
 # English speaking countries are at the top, obviously
 # sentiment analysis ------------------------------------------------------
 

@@ -24,8 +24,9 @@ The project should demonstrate:
 
 ## Research Question
 
-Which countries print the most articles about Endometriosis?
-How is the general sentiment of news articles about Endometriosis?
+RQ1: Which countries produce the greatest volume of news coverage about endometriosis?
+
+RQ2: How has the average sentiment tone of endometriosis news coverage changed over the past four years?
 
 I adjusted my research question, because the full text API on GDELT can only extract articles form the past 3 months. 
 

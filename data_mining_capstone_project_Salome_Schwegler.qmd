@@ -48,7 +48,9 @@ In a next step content(response, "text", encoding = "UTF-8") was used to extract
 The following R libraries need to be loaded (or installed):
 
 ```{r}
-# load libraries ----------------------------------------------------------
+#| results: "hide"
+#| message: false
+#| warning: false
 library(tidyverse)
 library(httr)
 library(rvest)
@@ -63,6 +65,9 @@ To address RQ1, individual article metadata was retrieved using the “artlist�
 #### Getting the data
 
 ```{r}
+#| results: "hide"
+#| message: false
+#| warning: false
 # get 250 articles about endometriosis from the past 3 months
 Sys.sleep(6)
 response <- httr::GET(
@@ -92,6 +97,9 @@ articles_df <- as.data.frame(data$articles)
 In order to work around the maximum record limit of 250 articles per request, a day-by-day loop was written to retrieve up to 250 articles for each day across a period of three months (between 25.12.2025 and 24.03.2026). By sending one request per day, the 250-record cap applies independently to each day rather than to the entire period, maximising the total number of articles retrieved. Each request is wrapped in a tryCatch() function, which catches any timeout or connection issues and skips to the next day rather than stopping the loop entirely if a single request fails. The tryCatch() function consists of two blocks. The first block executes the GET request, with two timeout parameters: timeout(60), which controls how long R waits to receive the full response and config(connecttimeout = 60), which controls how long R waits to establish the initial connection to the server. If the request fails, the execution jumps to the second block and prints “Timeout on” the current date and skips that specific day. If a valid response in the first block is received, which is indicated by the HTTP 200 status code, the JSON is parsed and converted into a dataframe. A six-second pause at the end of each iteration ensures the request frequency stays within the GDELT’s limits. Once the loop has iterated through each day, all daily dataframes are combined into a single table using bind_rows(). The combined dataframe was stored in the data_raw folder with the name final_endo_df_2.rds. It contains 1017 observations. The reason why this df is numbered with a 2 is that I looped multiple times through different time spans and on different days and the most articles that I was able to extract is stored in final_endo_df_2.rds and was used for further processing and analysis. The GET request seemed to not work well everytime, i.e. there have been days where I was only able to get around 50 observations.
 
 ```{r}
+#| results: "hide"
+#| message: false
+#| warning: false
 # Define dates
 date_sequence <- seq(as.Date("2025-12-25"), as.Date("2026-03-24"), by="day")
 all_articles <- list()

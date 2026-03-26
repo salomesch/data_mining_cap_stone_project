@@ -92,7 +92,6 @@ saveRDS(final_endo_df_2, "data_raw/final_endo_df_2.rds")
 
 # get sentiment score from the past 4 years:  -------------------------------------------
 
-
 Sys.sleep(6)
 response_timeline <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",

@@ -39,7 +39,9 @@ The next section will elaborate on how data was accessed, preprocessed and analy
 
 ### Data access and API
 
-The GDELT Project provides open access to its data through an API. An API is a standardised communication channel that allows to request data from one software system to another over the internet. In practical terms, a request is sent to the GDELT server in the form of a URL containing a set of parameters which specify i.e. the research keyword(s), the time range, query mode and the output format. The server then processes the request and returns the matching data which in this case is in JSON format. The JSON format can be parsed and converted into a dataframe in R. All requests were made using the httr package in R, which handles the HTTP GET requests. As mentioned above a pause of six seconds between calls was introduced to avoid being blocked by the server.
+The GDELT Project provides open access to its data through an API. An API is a standardised communication channel that allows to request data from one software system to another over the internet. In practical terms, a request is sent to the GDELT server in the form of a URL containing a set of parameters which specify i.e. the research keyword(s), the time range, query mode and the output format. The server then processes the request and returns the matching data which in this case is in JSON format. The JSON format can be parsed and converted into a dataframe in R. All requests were made using the httr package in R, which handles the HTTP GET requests. Additionally as a precaution and for courtesy reasons, Sys.sleep(6) pauses R for 6 seconds before sending the request to avoid being blocked by the server and Timeout(60) which returns an error message if the server has not responded within 60 seconds, are integrated into the request.
+
+In a next step content(response, "text", encoding = "UTF-8") was used to extract the raw response body from the response object. In order for R to read the data properly the fromJSON() function is used to parse the JSON string and convert it into an R list. The articles are now accessible under data\$articles and with the as.data.frame() function converted into a dataframe in R. The dataframe is saved to the data_raw folder for further processing and for practicability so that data does not need to be re-fetched from the API every time the script runs.
 
 ### Load libraries
 
@@ -56,7 +58,38 @@ library(lubridate)
 
 ### Article extraction (artlist mode)
 
+To address RQ1, individual article metadata was retrieved using the “artlist” mode. A single API call was first constructed to verify the structure of the response and whether it was possible to get data and to get familiar with the data. A critical limitation of the artlist mode is that it caps results at 250 articles per request. The code only worked when loading the whole code from Sys.sleep(6) until where the data is parsed at the same time and only once per session. Otherwise I was blocked from the server.
+
 #### Getting the data
+
+```{r}
+# get 250 articles about endometriosis from the past 3 months
+Sys.sleep(6)
+response <- httr::GET(
+  url = "https://api.gdeltproject.org/api/v2/doc/doc",
+  query = list(
+    query = "endometriosis",
+    mode = "artlist",
+    maxrecords = 250,
+    timespan = "1week",
+    format = "json"
+  ),
+  timeout(60)
+)
+
+
+# convert data from json to R list
+data <- fromJSON(content(response, "text", encoding = "UTF-8"))
+
+#Convert to a clean data frame
+articles_df <- as.data.frame(data$articles)
+
+# save articles
+#saveRDS(articles_df, "data_raw/articles_df.rds")
+
+```
+
+In order to get around the maximum record count of 250, a day-by-day loop was written to retrieve up to 250 articles for each day across a period of three months (between 25.12.2025 and 24.03.2026).
 
 #### Preprocessing the data
 

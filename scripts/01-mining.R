@@ -12,10 +12,12 @@ response <- httr::GET(
     query = "endometriosis",
     mode = "artlist",
     maxrecords = 250,
-    timespan = "3months",
+    timespan = "1week",
     format = "json"
-  ) 
+  ),
+  timeout(60)
 )
+
 
 # convert data from json to R list
 data <- fromJSON(content(response, "text", encoding = "UTF-8"))

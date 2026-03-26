@@ -29,7 +29,21 @@ Due to the limited scope of this project and the constraints of data accessibili
 
 ### Data source
 
+All data for this project was retrieved from the GDELT Project. Its document version 2.0. GDELT is a real-time open data platform that monitors print, broadcast and web news media across the world in 152 languages. 65 languages are translated in real-time. It processes hundreds of thousands of articles per day and encodes information about “people, locations, organisations, themes, sources, emotions, counts, quotes, images and events” (<https://www.gdeltproject.org/>). For the purpose of this project two distinct query modes of the GDELT DOC API were used:
+
+“Artlist”, which returns metadata of individual article and “TimelineTone”, which returns time-series sentiment data aggregated across all matching documents.
+
+The API was accessed via HTTP GET request using the httr package in R. The endpoint used was <https://api.gdeltproject.org/api/v2/doc/doc>, with query parameters for the search term, mode, time range and output format. No API key is required to access GDELT, which is a big advantage. However the platform enforces rate limits on the frequency of the requests which is why Sys.sleep(6) and timeout(60) was integrated into the request.
+
+The next section will elaborate on how data was accessed, preprocessed and analysed for both distinct query modes separately.
+
+### Data access and API
+
+The GDELT Project provides open access to its data through an API. An API is a standardised communication channel that allows to request data from one software system to another over the internet. In practical terms, a request is sent to the GDELT server in the form of a URL containing a set of parameters which specify i.e. the research keyword(s), the time range, query mode and the output format. The server then processes the request and returns the matching data which in this case is in JSON format. The JSON format can be parsed and converted into a dataframe in R. All requests were made using the httr package in R, which handles the HTTP GET requests. As mentioned above a pause of six seconds between calls was introduced to avoid being blocked by the server.
+
 ### Load libraries
+
+The following R libraries need to be loaded (or installed):
 
 ```{r}
 # load libraries ----------------------------------------------------------

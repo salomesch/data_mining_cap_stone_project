@@ -218,6 +218,14 @@ media_coverage <- ggplot(endo_df_country_f, aes(x = n_articles, y = reorder(sour
   theme_minimal()
 media_coverage
 # English speaking countries are at the top, obviously
+
+```
+
+```{r}
+#save bar blot
+ggsave(media_coverage, filename = "plots/media_coverage.png",
+       dpi = 300,
+       height = 5)
 ```
 
 Further only the top 10 countries with the highest article counts are extracted and stored in a dataframe for a visualisation of the top 10 countries with the most news coverage on endometriosis.
@@ -249,11 +257,18 @@ media_coverage_top10
 
 ```
 
+```{r}
+#save bar blot
+ggsave(media_coverage_top10, filename = "plots/media_coverage_top10.png",
+       dpi = 300,
+       height = 5)
+```
+
 The bar chart reveals a clear dominance of English-speaking countries at the top of the ranking.
 
 ### Sentiment score (TimelineTone mode)
 
-In order to answer RQ2 a second query mode TimelineTone is applied. Unlike the artlist, this mode does not return indiviudal articles but instead aggregates the average tone of all matching documents into a time series.
+In order to answer RQ2 a second query mode TimelineTone is applied. Unlike the artlist, this mode does not return individual articles but instead aggregates the average tone of all matching documents into a time series.
 
 #### Getting the data
 
@@ -289,6 +304,115 @@ timeline_df <- data_timeline$timeline$data[[1]]
 
 #### Preprocessing the data
 
+Convert the date again to a readable format and separate date into individual units.
+
+```{r}
+#load data 
+timeline_df_preprocessed <- readRDS("data_raw/timeline_df_4.rds")
+
+# create readable format of date (this step was done with the help of AI)
+timeline_df_preprocessed <- timeline_df_preprocessed |> 
+  mutate(date = as.Date(substr(date, 1, 8), format = "%Y%m%d"))
+
+timeline_df_preprocessed |> summary()
+
+# split up date for analysis of years and months and days
+
+timeline_df_preprocessed <- timeline_df_preprocessed |>
+  mutate(
+    year  = year(date),
+    month = month(date, label = TRUE),
+    day   = day(date)
+  )
+# save preprocessed df
+saveRDS(timeline_df_preprocessed, "data_preprocessed/timeline_df_preprocessed.rds")
+```
+
 #### Analysis
+
+```{r}
+#load data 
+timeline_df_preprocessed <- readRDS("data_preprocessed/timeline_df_preprocessed.rds")
+
+timeline_df_preprocessed |> summary()
+
+```
+
+Compute average sentiment score per year
+
+```{r}
+average_sentiments_yearly <- timeline_df_preprocessed |> 
+  group_by(year) |> 
+  summarise(sentiment = mean(value, na.rm=T))
+average_sentiments_yearly
+```
+
+Create a bar plot of the average sentiment score per year. the score has become slightly less negative over the years.
+
+```{r}
+sentiment_plot_yearly <- ggplot(average_sentiments_yearly, aes(x = factor(year), y = sentiment)) +
+  geom_bar(stat = "identity", colour = "black", fill = "#2171B5", alpha = 0.7) +
+  geom_text(
+    aes(label = round(sentiment, 2)), 
+    vjust  = -1,
+    colour = "white",
+    size   = 5,
+    fontface = "bold"
+  ) +
+  theme_minimal() +
+  ggtitle("Average Sentiment Score of Articles about Endometriosis per Year") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
+  labs(x = "", y = "") +
+  scale_x_discrete(position = "top")
+
+
+sentiment_plot_yearly
+```
+
+```{r}
+#save bar blot
+ggsave(sentiment_plot_yearly, filename = "plots/sentiment_plot_yearly.png",
+       dpi = 300,
+       height = 5)
+```
+
+Group by year and month to show monthly trends of sentiment score over the years.
+
+```{r}
+average_sentiments_month_yearly <- timeline_df_preprocessed |> 
+  group_by(year, month) |> 
+  summarise(sentiment = mean(value, na.rm=T), .groups = "drop")
+average_sentiments_month_yearly
+```
+
+Create a bar plot of average sentiment score per month for all years
+
+```{r}
+sentiment_plot_monthly <- ggplot(average_sentiments_month_yearly, aes(x = factor(month), y = sentiment)) +
+  geom_bar(stat = "identity", fill = "#6BAED6", color = "black", alpha = 0.7) +
+  facet_wrap(~ year, ncol = 2) +
+  ggtitle("Average Sentiment Score per Month over the Years") +
+  xlab("Month") +
+  ylab("Average Sentiment Score") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"), 
+        axis.text.x = element_text(size = 12),
+        axis.title.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14)) +
+  scale_x_discrete(labels = month.abb)
+
+sentiment_plot_monthly
+```
+
+```{r}
+#save bar blot
+ggsave(sentiment_plot_monthly, filename = "plots/sentiment_plot_monthly.png",
+       dpi = 300,
+       height = 5)
+```
+
+There is now clear pattern visible.
 
 ## Conclusion and Limitations

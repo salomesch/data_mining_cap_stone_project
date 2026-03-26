@@ -65,9 +65,9 @@ To address RQ1, individual article metadata was retrieved using the “artlist�
 #### Getting the data
 
 ```{r}
-#| results: "hide"
-#| message: false
-#| warning: false
+#| eval: false
+#| include: false
+# due to the frequent occurence of server errors or server overload this cell is not executed when rendering this quarto as a pdf
 # get 250 articles about endometriosis from the past 3 months
 Sys.sleep(6)
 response <- httr::GET(
@@ -97,9 +97,10 @@ articles_df <- as.data.frame(data$articles)
 In order to work around the maximum record limit of 250 articles per request, a day-by-day loop was written to retrieve up to 250 articles for each day across a period of three months (between 25.12.2025 and 24.03.2026). By sending one request per day, the 250-record cap applies independently to each day rather than to the entire period, maximising the total number of articles retrieved. Each request is wrapped in a tryCatch() function, which catches any timeout or connection issues and skips to the next day rather than stopping the loop entirely if a single request fails. The tryCatch() function consists of two blocks. The first block executes the GET request, with two timeout parameters: timeout(60), which controls how long R waits to receive the full response and config(connecttimeout = 60), which controls how long R waits to establish the initial connection to the server. If the request fails, the execution jumps to the second block and prints “Timeout on” the current date and skips that specific day. If a valid response in the first block is received, which is indicated by the HTTP 200 status code, the JSON is parsed and converted into a dataframe. A six-second pause at the end of each iteration ensures the request frequency stays within the GDELT’s limits. Once the loop has iterated through each day, all daily dataframes are combined into a single table using bind_rows(). The combined dataframe was stored in the data_raw folder with the name final_endo_df_2.rds. It contains 1017 observations. The reason why this df is numbered with a 2 is that I looped multiple times through different time spans and on different days and the most articles that I was able to extract is stored in final_endo_df_2.rds and was used for further processing and analysis. The GET request seemed to not work well everytime, i.e. there have been days where I was only able to get around 50 observations.
 
 ```{r}
-#| results: "hide"
-#| message: false
-#| warning: false
+#| eval: false
+#| include: false
+# running the loop takes almost an hour, thats why this cell is not executed when renederig the quarto to a pdf
+
 # Define dates
 date_sequence <- seq(as.Date("2025-12-25"), as.Date("2026-03-24"), by="day")
 all_articles <- list()
@@ -283,6 +284,8 @@ In order to answer RQ2 a second query mode TimelineTone is applied. Unlike the a
 The GET request works as already described in the Data Access and API section. The maximum timespan of four years was added. Therefore a sentiment score for each day across 4 years is requested in the following code. A total of 1442 observations were extracted and stored in timeline_df_4.
 
 ```{r}
+#| eval: false
+#| include: false
 Sys.sleep(6)
 response_timeline <- GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
@@ -315,6 +318,7 @@ timeline_df <- data_timeline$timeline$data[[1]]
 Convert the date again to a readable format and separate date into individual units.
 
 ```{r}
+
 #load data 
 timeline_df_preprocessed <- readRDS("data_raw/timeline_df_4.rds")
 
@@ -424,3 +428,11 @@ ggsave(sentiment_plot_monthly, filename = "plots/sentiment_plot_monthly.png",
 There is now clear pattern visible.
 
 ## Conclusion and Limitations
+
+## Bibliography
+
+Armour, M., Sinclair, J., Ng, C. H. M., Hyman, M. S., Lawson, K., Smith, C. A., & Abbott, J. (2020). Endometriosis and chronic pelvic pain have similar impact on women, but time to diagnosis is decreasing: An Australian survey. *Scientific Reports*, *10*(1), 16253. <https://doi.org/10.1038/s41598-020-73389-2>
+
+Culley, L., Law, C., Hudson, N., Denny, E., Mitchell, H., Baumgarten, M., & Raine-Fenning, N. (2013). The social and psychological impact of endometriosis on women’s lives: A critical narrative review. *Human Reproduction Update*, *19*(6), 625–639. <https://doi.org/10.1093/humupd/dmt027>
+
+Shafrir, A. L., Farland, L. V., Shah, D. K., Harris, H. R., Kvaskoff, M., Zondervan, K., & Missmer, S. A. (2018). Risk for and consequences of endometriosis: A critical epidemiologic review. *Best Practice & Research Clinical Obstetrics & Gynaecology, Endometriosis: Clinical Understanding, Diagnosis and Treatment*, *51*, 1–15. <https://doi.org/10.1016/j.bpobgyn.2018.06.001>

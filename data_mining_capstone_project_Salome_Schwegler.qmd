@@ -62,13 +62,15 @@ library(lubridate)
 
 To address RQ1, individual article metadata was retrieved using the “artlist” mode. A single API call was first constructed to verify the structure of the response and whether it was possible to get data and to get familiar with the data. A critical limitation of the artlist mode is that it caps results at 250 articles per request. The code only worked when loading the whole code from Sys.sleep(6) until where the data is parsed at the same time and only once per session. Otherwise I was blocked from the server.
 
+To check whether the API's parameters were properly defined, this URL can be opened in a separate browser window: <https://api.gdeltproject.org/api/v2/doc/doc/?query=endometriosis&mode=artlist&maxrecords=250&timespan=1week>
+
 #### Getting the data
 
 ```{r}
 #| eval: false
 #| include: false
 # due to the frequent occurence of server errors or server overload this cell is not executed when rendering this quarto as a pdf
-# get 250 articles about endometriosis from the past 3 months
+# get 250 articles about endometriosis from the past 1 week
 Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
@@ -78,8 +80,7 @@ response <- httr::GET(
     maxrecords = 250,
     timespan = "1week",
     format = "json"
-  ),
-  timeout(60)
+  )
 )
 
 
@@ -283,6 +284,8 @@ In order to answer RQ2 a second query mode TimelineTone is applied. Unlike the a
 
 The GET request works as already described in the Data Access and API section. The maximum timespan of four years was added. Therefore a sentiment score for each day across 4 years is requested in the following code. A total of 1442 observations were extracted and stored in timeline_df_4.
 
+URL to check API in browser: <https://api.gdeltproject.org/api/v2/doc/doc?query=endometriosis&mode=TimelineTone&timespan=4y>
+
 ```{r}
 #| eval: false
 #| include: false
@@ -294,8 +297,7 @@ response_timeline <- GET(
     mode = "TimelineTone",      # this shows the sentiment over time)
     timespan = "4y",            
     format = "json"
-  ),
-  timeout(60) 
+  )
 )
 
 data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UTF-8"))
@@ -435,4 +437,6 @@ Armour, M., Sinclair, J., Ng, C. H. M., Hyman, M. S., Lawson, K., Smith, C. A., 
 
 Culley, L., Law, C., Hudson, N., Denny, E., Mitchell, H., Baumgarten, M., & Raine-Fenning, N. (2013). The social and psychological impact of endometriosis on women’s lives: A critical narrative review. *Human Reproduction Update*, *19*(6), 625–639. <https://doi.org/10.1093/humupd/dmt027>
 
-Shafrir, A. L., Farland, L. V., Shah, D. K., Harris, H. R., Kvaskoff, M., Zondervan, K., & Missmer, S. A. (2018). Risk for and consequences of endometriosis: A critical epidemiologic review. *Best Practice & Research Clinical Obstetrics & Gynaecology, Endometriosis: Clinical Understanding, Diagnosis and Treatment*, *51*, 1–15. <https://doi.org/10.1016/j.bpobgyn.2018.06.001>
+Shafrir, A. L., Farland, L. V., Shah, D. K., Harris, H. R., Kvaskoff, M., Zondervan, K., & Missmer, S. A. ( 2018). Risk for and consequences of endometriosis: A critical epidemiologic review. *Best Practice & Research Clinical Obstetrics & Gynaecology, Endometriosis: Clinical Understanding, Diagnosis and Treatment*, *51*, 1–15. <https://doi.org/10.1016/j.bpobgyn.2018.06.001>
+
+The GDELT Project. «Documentation». <https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/>.

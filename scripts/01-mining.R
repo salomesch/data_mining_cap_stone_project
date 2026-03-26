@@ -4,7 +4,7 @@ library(httr)
 library(rvest)
 library(jsonlite)
 
-# get 250 articles about endometriosis from the past 3 months
+# get 250 articles about endometriosis from the past week
 Sys.sleep(6)
 response <- httr::GET(
   url = "https://api.gdeltproject.org/api/v2/doc/doc",
@@ -14,8 +14,7 @@ response <- httr::GET(
     maxrecords = 250,
     timespan = "1week",
     format = "json"
-  ),
-  timeout(60)
+  )
 )
 
 
@@ -100,8 +99,7 @@ response_timeline <- GET(
     mode = "TimelineTone",      # this shows the sentiment over time)
     timespan = "4y",            
     format = "json"
-  ),
-  timeout(60) 
+  )
 )
 
 data_timeline <- fromJSON(content(response_timeline, as = "text", encoding = "UTF-8"))
@@ -130,8 +128,7 @@ response_country <- GET(
     mode = "TimelineTone",
     timespan = "4y",
     format = "json"
-  ),
-  timeout(60)
+  )
 )
 
 raw_country <- fromJSON(content(response_country, as = "text", encoding = "UTF-8"))

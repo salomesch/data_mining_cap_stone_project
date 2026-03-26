@@ -9,13 +9,36 @@ editor: visual
 
 ## Introduction
 
-Endometriosis is a chronic inflammatory illness in which tissue resembling the endometrial lining of the uterus grows elsewhere, causing severe pain and a great quantity and a wide range of symptoms (Culley et al. 2013). Despite affecting an estimated 190 million people worldwide, endometriosis remains significantly underdiagnosed, with patients waiting an average of seven to ten years before receiving an accurate diagnosis (Shafrir et al. 2018). This diagnostic delay can be attributed to structural shortcomings within healthcare systems, as well as to a broader lack of cultural acceptance of the illness (Armour et al. 2020). Both structural issues and the degree of societal acceptance are sustained and reflected by media coverage.
+Endometriosis is a chronic inflammatory illness in which tissue resembling the endometrial lining of the uterus grows elsewhere, causing severe pain and a wide range of symptoms (Culley et al. 2013). Despite affecting an estimated 190 million people worldwide, endometriosis remains significantly underdiagnosed, with patients waiting an average of seven to ten years before receiving an accurate diagnosis (Shafrir et al. 2018). The estimated number of unreported cases is assumed to be much greater. The diagnostic delay can be attributed to structural shortcomings within healthcare systems and research, as well as to a broader lack of cultural acceptance of the illness (Armour et al. 2020). Both structural issues and the degree of societal acceptance are sustained and reflected by media coverage.
 
-This capstone project, conducted within the data mining class, examines global and multilingual news coverage of endometriosis with the use of the Global Database of Events, Language, and Tone (GDELT Project). The GDELT Project is the largest open database of the human society that has ever been created. The database aims to display all data about our society and to foster interconnectivity across the globe. This is achieved by capturing and representing media coverage from almost every corner of the world. The database is updated daily, and all the real-time datasets are updated every 15 minutes.
+This capstone project, conducted within the data mining class, examines global and multilingual news coverage of endometriosis with the use of the Global Database of Events, Language, and Tone (GDELT Project). The GDELT Project is the largest open database of the human society that has ever been created. The database aims to display all data about our society and to foster interconnectivity across the globe. This is achieved by capturing and representing media coverage from almost every corner of the world. The database is updated daily, while the real-time datasets are updated every 15 minutes.
+
+Analysing news coverage of endometriosis contributes to a better understanding of how the condition is perceived in society and the extent to which new scientific developments, such as advances in identifying the root causes of the illness or emerging treatment options and new medications, are reflected in public discourse.
+
+Truthfully this project aimed to examine the content of news articles and the specific topics covered in articles about endometriosis. This included, for instance, whether articles provide general explanations of the condition, document personal live experiences of patients, report on new medications and treatments in light of recent scientific and academic progress or serve as practical guides for those affected. Just to name a few expected topics. However, this goal proved unfeasible give the scope of the project, the limitations of the API and legal constraints. The GDELT API does not permit the extraction of full article text, partly because the articles originate from a wide range of news organisations and portals, the majority of which operate behind paywalls. It was therefore only possible to retrieve basic metadata via the API, such as the URL, date, country and language of each article. While web scraping could theoretically have enabled full text extraction, given that article URLSs were correctly extracted and hence available, this approach was however deliberately avoided. As discussed repeatedly in class, web scraping requires extreme caution and should be avoided where possible due to legal concerns. It should also be noted that the GDELT API only allows articles extraction for the preceding three months, which poses on additional limitation on the scope of this research. The research question were therefore revised iteratively to reflect what is empirically feasible within the constraints of the data source.
+
+### Research question
+
+Due to the limited scope of this project and the constraints of data accessibility through the GDELT Project API, two adapted research questions will guide the following analysis:  
+
+**RQ1:** Which countries produce the greatest volume of news coverage about endometriosis?
+
+**RQ2:** How has the average sentiment tone of endometriosis news coverage changed over the past four years?
 
 ## Data and Methodology
 
 ### Data source
+
+### Load libraries
+
+```{r}
+# load libraries ----------------------------------------------------------
+library(tidyverse)
+library(httr)
+#library(rvest)
+library(jsonlite)
+library(lubridate)
+```
 
 ### Article extraction (artlist mode)
 

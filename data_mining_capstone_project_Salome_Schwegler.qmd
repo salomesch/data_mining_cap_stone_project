@@ -7,6 +7,10 @@ editor: visual
 
 ## LLM disclosure
 
+Throughout this project, Claude Sonnet 4.6 was used. Claude was mostly used for debugging and explanation of code. I further used Claude to adapt the code introduced in class and tailer it to the specific requirements of my project. Claude was very helpful with building the loop, which was an adapted version from another loop developed in a different data mining course a few years ago, in which a loop had been used to query the New York Times (NYT) API. The NYT loop served as a practical starting point, which was modified with the help of Claude. An initial attempt to generate the loop from scratch using an LLM alone did not return functional code. However, having the NYT API as a working example proved very useful, as it made it easier to update, adapt and tailor the loop to my project.
+
+Additionally, Deepl Write was used to translate, explain and support the wording of text in English.
+
 ## Introduction
 
 Endometriosis is a chronic inflammatory illness in which tissue resembling the endometrial lining of the uterus grows elsewhere, causing severe pain and a wide range of symptoms (Culley et al. 2013). Despite affecting an estimated 190 million people worldwide, endometriosis remains significantly underdiagnosed, with patients waiting an average of seven to ten years before receiving an accurate diagnosis (Shafrir et al. 2018). The estimated number of unreported cases is assumed to be much greater. The diagnostic delay can be attributed to structural shortcomings within healthcare systems and research, as well as to a broader lack of cultural acceptance of the illness (Armour et al. 2020). Both structural issues and the degree of societal acceptance are sustained and reflected by media coverage.
